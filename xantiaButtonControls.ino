@@ -4,9 +4,9 @@
 // ADS, 6/10/16
 
 // set pins
-const int wheelButtonsIn1 = 0; // use pins 0 and 1 to read voltage
+const int wheelButtonsIn1 = 0; // use analog pins 0 and 1 to read voltage
 const int wheelButtonsIn2 = 1; // output from wheel buttons.
-const int volUp = 7;           
+const int volUp = 7;           // use digital pins for output.
 const int volDown = 8;
 const int fwdSkip = 9;
 const int bwdSkip = 10;
@@ -43,7 +43,7 @@ void loop() {
   float voltageA1 = buttonArray1Value * (5.0 / 1023.0);
   float voltageA2 = buttonArray2Value * (5.0 / 1023.0);
   
-  // array 1 (volume controls and memo button).
+  // Read array 1 (volume controls and memo button).
   if(voltageA1 < 1.00)  {
     digitalWrite(volDown, HIGH);
     serialDebug(voltageA1,"volDown");
@@ -72,7 +72,7 @@ void loop() {
     serialDebug(voltageA1,"none(a1)");
   }
   
-  // array two (skip and mute buttons)
+  // Read array two (skip and mute buttons)
   if(voltageA2 < 1.00)  {
     switch(ampIsOn) {
       case 0:
