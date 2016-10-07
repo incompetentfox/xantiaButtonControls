@@ -16,7 +16,7 @@ const int custom1 = 5;
 const int custom2 = 6;
 const int buttonArray1[] = {volUp,volDown,memo,custom1};  // group buttons in arrays
 const int buttonArray2[] = {fwdSkip,bwdSkip,custom2};// for neater pin resets.
-int ampIsOn = 0;
+// int ampIsOn = 0; // This flag is to toggle the amplifier standby. Presently not reliable enough. 
 
 int debugFlag = 1; 
 char* buttonName = "";
@@ -74,7 +74,14 @@ void loop() {
   
   // Read array two (skip and mute buttons)
   if(voltageA2 < 1.00)  {
-    switch(ampIsOn) {
+      digitalWrite(mute, LOW);      // Amp standby needs to be pulled LOW.
+      serialDebug(voltageA2,"mute");
+      delay(25);
+  }
+
+    // the following is code to toggle the amp standby state when the mute button is pressed.
+    // it seems to get stuck in the while loop for some reason- will try to debug.
+    /*switch(ampIsOn) {
       case 0:
         {
             digitalWrite(mute,LOW);
@@ -99,8 +106,8 @@ void loop() {
           }
           break;
         }
-    }
-    serialDebug(voltageA2,"mute");
+    }*/
+
   }
   else if(voltageA2 < 1.00 && voltageA2 < 1.50)  {
     digitalWrite(custom2, HIGH);
@@ -122,6 +129,7 @@ void loop() {
       digitalWrite(buttonArray2[i],LOW);
       delay(25);      
     }
+    digitalWrite(mute,HIGH); 
     serialDebug(voltageA2,"none(a2)");
   }
 
