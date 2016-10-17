@@ -15,7 +15,20 @@ const int mute = 12;
 const int custom1 = 5;
 const int custom2 = 6;
 const int buttonArray1[] = {volUp,volDown,memo,custom1};  // group buttons in arrays
-const int buttonArray2[] = {fwdSkip,bwdSkip,custom2};// for neater pin resets.
+const int buttonArray2[] = {fwdSkip,bwdSkip,mute,custom2};// for neater pin resets.
+
+// voltage levels required for pin activation- if driving the wheel from 5v, values are:
+// const int vLev0 = 1
+// const int vLev1 = 1.5
+// const int vLev2 = 2
+// const int vLev3 = 3.9
+// If driving from 3.6v:
+const int vLev0 = 0.5;
+const int vLev1 = 1.01;
+const int vLev2 = 1.27;
+const int vLev3 = 2.38;
+
+
 // int ampIsOn = 0; // This flag is to toggle the amplifier standby. Presently not reliable enough. 
 
 int debugFlag = 1; 
@@ -44,27 +57,27 @@ void loop() {
   float voltageA2 = buttonArray2Value * (5.0 / 1023.0);
   
   // Read array 1 (volume controls and memo button).
-  if(voltageA1 < 1.00)  {
+  if(voltageA1 < vLev0)  {
     digitalWrite(volDown, HIGH);
     serialDebug(voltageA1,"volDown");
     delay(25);
   }
-  if(voltageA1 > 1.00 && voltageA1 < 1.50)  {
+  if(voltageA1 > vLev0 && voltageA1 < vLev1)  {
     digitalWrite(custom1, HIGH);
     serialDebug(voltageA1,"Memo&VolUp");
     delay(25);
   }
-  else if(voltageA1 > 1.50 && voltageA1 < 2.00)  {
+  else if(voltageA1 > vLev1 && voltageA1 < vLev2)  {
     digitalWrite(volUp, HIGH);
     serialDebug(voltageA1,"volUp");
     delay(25);  
   }
-  else if(voltageA1 > 2.00 && voltageA1 < 3.90)  {
+  else if(voltageA1 > vLev2 && voltageA1 < vLev3)  {
     digitalWrite(memo, HIGH);
     serialDebug(voltageA1,"memo");
     delay(25);
   }
-  else if(voltageA1 > 3.90)  {
+  else if(voltageA1 > vLev3)  {
     for (int i=0; i < 3; i++){
       digitalWrite(buttonArray1[i],LOW);
       delay(25);
@@ -73,8 +86,8 @@ void loop() {
   }
   
   // Read array two (skip and mute buttons)
-  if(voltageA2 < 1.00)  {
-      digitalWrite(mute, LOW);      // Amp standby needs to be pulled LOW.
+  if(voltageA2 < vLev0)  {
+      digitalWrite(mute, HIGH);   
       serialDebug(voltageA2,"mute");
       delay(25);
   }
@@ -108,18 +121,18 @@ void loop() {
         }
     }*/
 
-  }
-  else if(voltageA2 < 1.00 && voltageA2 < 1.50)  {
+  // Voltages 10% lower on the back and forwards buttons because Citroen.
+  else if(voltageA2 < (vLev0*0.9) && voltageA2 < (vLev1*0.9)) {
     digitalWrite(custom2, HIGH);
     serialDebug(voltageA2,"fwdSkip+bwdSkip");
     delay(25);
   }
-  else if(voltageA2 < 1.50 && voltageA2 < 2.00)  {
+  else if(voltageA2 < (vLev1*0.9) && voltageA2 < (vLev2*0.9))  {
     digitalWrite(bwdSkip, HIGH);
     serialDebug(voltageA2,"bwdSkip");
     delay(25); 
   }
-  else if(voltageA2 < 2.00 && voltageA2 <3.90)  {
+  else if(voltageA2 < (vLev2*0.9) && voltageA2 < (vLev3*0.9))  {
     digitalWrite(fwdSkip, HIGH);
     serialDebug(voltageA2,"fwdSkip");
     delay(25);  
