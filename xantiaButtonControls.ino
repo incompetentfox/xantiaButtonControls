@@ -6,14 +6,14 @@
 // set pins
 const int wheelButtonsIn1 = 0; // use analog pins 0 and 1 to read voltage
 const int wheelButtonsIn2 = 1; // output from wheel buttons.
-const int volUp = 7;           // use digital pins for output.
-const int volDown = 8;
-const int fwdSkip = 9;
-const int bwdSkip = 10;
-const int memo = 11;
-const int mute = 12;
-const int custom1 = 5;
-const int custom2 = 6;
+#define volUp 9           // use digital pins for output.
+const int volDown = 10;
+const int fwdSkip = 8;
+const int bwdSkip = 7;
+const int memo = 5;
+const int mute = 6;
+const int custom1 = 3;
+const int custom2 = 4;
 const int buttonArray1[] = {volUp,volDown,memo,custom1};  // group buttons in arrays
 const int buttonArray2[] = {fwdSkip,bwdSkip,mute,custom2};// for neater pin resets.
 
@@ -53,8 +53,8 @@ void loop() {
 
   int buttonArray1Value = analogRead(wheelButtonsIn1);
   int buttonArray2Value = analogRead(wheelButtonsIn2);
-  float voltageA1 = buttonArray1Value * (5.0 / 1023.0);
-  float voltageA2 = buttonArray2Value * (5.0 / 1023.0);
+  float voltageA1 = buttonArray1Value * (3.6 / 1023.0); // lower multiplier will change depending on 
+  float voltageA2 = buttonArray2Value * (3.6 / 1023.0); // voltage used to drive the circuit. 3.6v here.
   
   // Read array 1 (volume controls and memo button).
   if(voltageA1 < vLev0)  {
@@ -121,18 +121,17 @@ void loop() {
         }
     }*/
 
-  // Voltages 10% lower on the back and forwards buttons because Citroen.
-  else if(voltageA2 < (vLev0*0.9) && voltageA2 < (vLev1*0.9)) {
+  else if(voltageA2 < vLev0 && voltageA2 < vLev1) {
     digitalWrite(custom2, HIGH);
     serialDebug(voltageA2,"fwdSkip+bwdSkip");
     delay(25);
   }
-  else if(voltageA2 < (vLev1*0.9) && voltageA2 < (vLev2*0.9))  {
+  else if(voltageA2 < vLev1 && voltageA2 < vLev2)  {
     digitalWrite(bwdSkip, HIGH);
     serialDebug(voltageA2,"bwdSkip");
     delay(25); 
   }
-  else if(voltageA2 < (vLev2*0.9) && voltageA2 < (vLev3*0.9))  {
+  else if(voltageA2 < vLev2 && voltageA2 < vLev3)  {
     digitalWrite(fwdSkip, HIGH);
     serialDebug(voltageA2,"fwdSkip");
     delay(25);  
@@ -146,7 +145,7 @@ void loop() {
     serialDebug(voltageA2,"none(a2)");
   }
 
- delay(250);
+ delay(25);
 }
 
 // debug (optional)
