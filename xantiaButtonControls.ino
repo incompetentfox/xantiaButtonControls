@@ -6,7 +6,7 @@
 // set pins
 const int wheelButtonsIn1 = 0; // use analog pins 0 and 1 to read voltage
 const int wheelButtonsIn2 = 1; // output from wheel buttons.
-#define volUp 9           // use digital pins for output.
+const int volUp = 9;         // use digital pins for output.
 const int volDown = 10;
 const int fwdSkip = 8;
 const int bwdSkip = 7;
@@ -24,9 +24,9 @@ const int buttonArray2[] = {fwdSkip,bwdSkip,mute,custom2};// for neater pin rese
 // const int vLev3 = 3.9
 // If driving from 3.6v:
 const int vLev0 = 0.5;
-const int vLev1 = 1.01;
-const int vLev2 = 1.27;
-const int vLev3 = 2.38;
+const int vLev1 = 1.8;
+const int vLev2 = 2.2;
+const int vLev3 = 2.6;
 
 
 // int ampIsOn = 0; // This flag is to toggle the amplifier standby. Presently not reliable enough. 
@@ -62,11 +62,7 @@ void loop() {
     serialDebug(voltageA1,"volDown");
     delay(25);
   }
-  if(voltageA1 > vLev0 && voltageA1 < vLev1)  {
-    digitalWrite(custom1, HIGH);
-    serialDebug(voltageA1,"Memo&VolUp");
-    delay(25);
-  }
+
   else if(voltageA1 > vLev1 && voltageA1 < vLev2)  {
     digitalWrite(volUp, HIGH);
     serialDebug(voltageA1,"volUp");
@@ -86,46 +82,13 @@ void loop() {
   }
   
   // Read array two (skip and mute buttons)
+  
   if(voltageA2 < vLev0)  {
       digitalWrite(mute, HIGH);   
       serialDebug(voltageA2,"mute");
       delay(25);
   }
 
-    // the following is code to toggle the amp standby state when the mute button is pressed.
-    // it seems to get stuck in the while loop for some reason- will try to debug.
-    /*switch(ampIsOn) {
-      case 0:
-        {
-            digitalWrite(mute,LOW);
-            delay(250);
-            ampIsOn = 1;
-            Serial.println("Amp switched ON");
-            while(voltageA2 < 1.00)  {
-             
-              voltageA2 = (analogRead(wheelButtonsIn2)* (5.0 / 1023.0));
-            }
-            break;
-        }
-      case 1:
-        {
-          digitalWrite(mute,HIGH);
-          delay(250);
-          ampIsOn = 0;
-          Serial.println("Amp switched OFF");
-          while(voltageA2 < 1.00)  {
-              
-              voltageA2 = (analogRead(wheelButtonsIn2)* (5.0 / 1023.0));
-          }
-          break;
-        }
-    }*/
-
-  else if(voltageA2 < vLev0 && voltageA2 < vLev1) {
-    digitalWrite(custom2, HIGH);
-    serialDebug(voltageA2,"fwdSkip+bwdSkip");
-    delay(25);
-  }
   else if(voltageA2 < vLev1 && voltageA2 < vLev2)  {
     digitalWrite(bwdSkip, HIGH);
     serialDebug(voltageA2,"bwdSkip");
