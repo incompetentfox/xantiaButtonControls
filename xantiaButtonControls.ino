@@ -28,9 +28,6 @@ const int vLev1 = 1.8;
 const int vLev2 = 2.2;
 const int vLev3 = 2.6;
 
-
-// int ampIsOn = 0; // This flag is to toggle the amplifier standby. Presently not reliable enough. 
-
 int debugFlag = 1; 
 char* buttonName = "";
 float voltage = 0.0;
