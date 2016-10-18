@@ -18,15 +18,16 @@ const int buttonArray1[] = {volUp,volDown,memo,custom1};  // group buttons in ar
 const int buttonArray2[] = {fwdSkip,bwdSkip,mute,custom2};// for neater pin resets.
 
 // voltage levels required for pin activation- if driving the wheel from 5v, values are:
-// const int vLev0 = 1
-// const int vLev1 = 1.5
-// const int vLev2 = 2
-// const int vLev3 = 3.9
+// const float vLev0 = 1
+// const float vLev1 = 1.5
+// const float vLev2 = 2
+// const float vLev3 = 3.9
 // If driving from 3.6v:
-const int vLev0 = 0.5;
-const int vLev1 = 1.8;
-const int vLev2 = 2.2;
-const int vLev3 = 2.6;
+const float vLev0 = 0.5;
+const float vLev1 = 1.8;
+const float vLev2 = 2.2;
+const float vLev3 = 2.6;
+const double vRef = 2.7; // reference voltage to be read by A0
 
 int debugFlag = 1; 
 char* buttonName = "";
@@ -50,8 +51,8 @@ void loop() {
 
   int buttonArray1Value = analogRead(wheelButtonsIn1);
   int buttonArray2Value = analogRead(wheelButtonsIn2);
-  float voltageA1 = buttonArray1Value * (3.6 / 1023.0); // lower multiplier will change depending on 
-  float voltageA2 = buttonArray2Value * (3.6 / 1023.0); // voltage used to drive the circuit. 3.6v here.
+  float voltageA1 = buttonArray1Value * (vRef / 1023.0); // lower multiplier will change depending on 
+  float voltageA2 = buttonArray2Value * (vRef / 1023.0); // voltage used to drive the circuit. 3.6v here.
   
   // Read array 1 (volume controls and memo button).
   if(voltageA1 < vLev0)  {
@@ -86,17 +87,17 @@ void loop() {
       delay(25);
   }
 
-  else if(voltageA2 < vLev1 && voltageA2 < vLev2)  {
+  else if(voltageA2 > vLev1 && voltageA2 < vLev2)  {
     digitalWrite(bwdSkip, HIGH);
     serialDebug(voltageA2,"bwdSkip");
     delay(25); 
   }
-  else if(voltageA2 < vLev2 && voltageA2 < vLev3)  {
+  else if(voltageA2 > vLev2 && voltageA2 < vLev3)  {
     digitalWrite(fwdSkip, HIGH);
     serialDebug(voltageA2,"fwdSkip");
     delay(25);  
   }
-  else if(voltageA2 > 4.00)  {
+  else if(voltageA2 > vLev3)  {
     for (int i=0; i < 3; i++){
       digitalWrite(buttonArray2[i],LOW);
       delay(25);      
