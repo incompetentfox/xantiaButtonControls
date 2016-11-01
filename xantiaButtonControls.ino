@@ -31,7 +31,7 @@ const float vLev0 = 0.5;
 const float vLev1 = 1.8;
 const float vLev2 = 2.2;
 const float vLev3 = 2.6;
-const double vRef = 2.7; // reference voltage to be read by A0
+const double vRef = 3.6; // reference voltage to be read by A0
 
 int debugFlag = 1; 
 char* buttonName = "";
