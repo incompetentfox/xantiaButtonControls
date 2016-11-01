@@ -2,6 +2,10 @@
 // Provide digital output given the analogue voltage input
 // from Citroen steering wheel stereo controls.
 // ADS, 6/10/16
+#include <EEPROM.h>
+const int addr = 0; // location in EEPROM to store amp power variable
+int ampIsOn = EEPROM.read(addr); // read stored amp state
+
 
 // set pins
 const int wheelButtonsIn1 = 0; // use analog pins 0 and 1 to read voltage
@@ -43,7 +47,18 @@ void setup(){
   pinMode(bwdSkip, OUTPUT);
   pinMode(memo, OUTPUT);
   pinMode(mute, OUTPUT);
-
+  
+  if(ampIsOn!=0 || ampIsOn!=1){  // if amp state is missing or corrupted, switch off as default.
+  ampIsOn=0;
+  }
+  
+  if(ampIsOn=0)  {          // turn amp on/off based on last state
+   digitalWrite(mute,LOW); 
+  }
+  else  {
+    digitalWrite(mute,HIGH);
+  }
+  
   Serial.begin(9600); // debug over serial
 }
 
@@ -79,10 +94,10 @@ void loop() {
     serialDebug(voltageA1,"none(a1)");
   }
   
-  // Read array two (skip and mute buttons)
+  // Read array 2 (skip and mute buttons)
   
   if(voltageA2 < vLev0)  {
-      digitalWrite(mute, HIGH);   
+      ampPowerToggle();  
       serialDebug(voltageA2,"mute");
       delay(25);
   }
@@ -107,6 +122,30 @@ void loop() {
   }
 
  delay(25);
+}
+
+void ampPowerToggle()  {
+  switch(ampIsOn) {
+      case 0:
+        {
+            digitalWrite(mute,HIGH);
+            delay(250);
+            ampIsOn = 1;
+            Serial.println("Amp switched ON");
+            EEPROM.write(addr,1);
+          }
+            break;
+        
+      case 1:
+        {
+          digitalWrite(mute,LOW);
+          delay(250);
+          ampIsOn = 0;
+          Serial.println("Amp switched OFF");
+          EEPROM.write(addr,0);
+        }
+          break;        
+    }
 }
 
 // debug (optional)
