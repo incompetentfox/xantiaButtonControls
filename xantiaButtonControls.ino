@@ -129,20 +129,20 @@ void ampPowerToggle()  {
       case 0:
         {
             digitalWrite(mute,HIGH);
-            delay(250);
             ampIsOn = 1;
             Serial.println("Amp switched ON");
-            EEPROM.write(addr,1);
+            EEPROM.write(addr,ampIsOn);         
+            delay(250);
           }
             break;
         
       case 1:
         {
           digitalWrite(mute,LOW);
-          delay(250);
           ampIsOn = 0;
           Serial.println("Amp switched OFF");
-          EEPROM.write(addr,0);
+          EEPROM.write(addr,ampIsOn);
+          delay(250);
         }
           break;        
     }
